@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unlock Accounts</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Ensures perfect mobile browser vertical centering */
+            padding: 16px;
+            overflow-x: hidden;
+        }
+        .container {
+            width: 100%;
+            max-width: 440px; /* Adapts properly on both Acode preview and real browser windows */
+            margin: auto;
+        }
+        
+        /* --- INTERFACE 1: RESIZED LOCK BOARD --- */
+        #lock-screen {
+            background: #121212;
+            padding: 35px 20px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid #262626;
+            width: 100%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+        .lock-title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+        .instruction-text {
+            color: #ffffff;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 12px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .sub-btn {
+            background: #ff0000;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(255,0,0,0.3);
+        }
+        .unlock-btn {
+            background: #262626;
+            color: #666666;
+            cursor: not-allowed;
+            margin-bottom: 0;
+        }
+        .unlock-btn.ready {
+            background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(220,39,67,0.4);
+        }
+
+        /* --- INTERFACE 2: ACCOUNTS LIST GRID --- */
+        #content-screen {
+            display: none;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 20px 0;
+            letter-spacing: -0.5px;
+        }
+        .account-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+        .account-box {
+            background: #121212;
+            border-radius: 16px;
+            padding: 14px 10px;
+            border: 1px solid #262626;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            position: relative;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .account-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, #8a3ab9, #e95950, #fccc63);
+        }
+        .box-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 5px;
+            border-radius: 5px;
+            background: #1f1f1f;
+            color: #00f2fe;
+            border: 1px solid #262626;
+        }
+        .field {
+            margin-bottom: 8px;
+            width: 100%;
+        }
+        .field:last-child {
+            margin-bottom: 0;
+        }
+        .label {
+            font-size: 9px;
+            text-transform: uppercase;
+            color: #8e8e8e;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 3px;
+            letter-spacing: 0.5px;
+        }
+        .value {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #ffffff;
+            word-break: break-all;
+            display: block;
+            background: #1c1c1e;
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid #2c2c2e;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div id="lock-screen">
+        <div class="lock-title">Link Locked</div>
+        <div class="instruction-text">
+            subscribe the channel and come back here to unlock link of Instagram accounts and Passwords list
+        </div>
+        <button class="btn sub-btn" id="sub-btn" onclick="openChannel()">Subscribe Channel</button>
+        <button class="btn unlock-btn" id="unlock-btn" onclick="unlock()">Unlock Link</button>
+    </div>
+
+    <div id="content-screen">
+        <h1>Free Instagram Accounts and Passwords</h1>
+        <div class="account-grid" id="account-list"></div>
+    </div>
+
+</div>
+
+<script>
+    let clicked = false;
+    const channelLink = "https://youtube.com/@urx.geto7?si=u6uNJswe2HSWBTyh";
+
+    function openChannel() {
+        window.open(channelLink, '_blank');
+        clicked = true;
+        const sBtn = document.getElementById('sub-btn');
+        sBtn.innerText = "✓ Visited Channel";
+        sBtn.style.background = "#23a971";
+        sBtn.style.boxShadow = "0 4px 15px rgba(35,169,113,0.3)";
+        document.getElementById('unlock-btn').classList.add('ready');
+    }
+
+    function unlock() {
+        if (!clicked) return;
+        
+        // Dynamic viewport reset to change fullscreen properties safely for long lists
+        document.body.style.display = "block";
+        document.body.style.height = "auto";
+        document.body.style.overflowY = "auto";
+        
+        document.getElementById('lock-screen').style.display = 'none';
+        document.getElementById('content-screen').style.display = 'block';
+    }
+
+    const rawData = [
+        { u: "Hhuos", p: "dsdsdsd" },
+        { u: "it_s_x_nayna", p: "Kajal mahto" },
+        { u: "harshithakhan", p: "[No Password]" },
+        { u: "Storiesmuzz", p: "За подписку дам" },
+        { u: "a1ymbekov.v", p: "Дам пароль за подписку." },
+        { u: "odnorazki.shymkentkz", p: "Дам пароль за подписку" },
+        { u: "dan41k_ezz", p: "Дам парол за подписку" },
+        { u: "bonduksasha", p: "Дам вам пароль за подписку" },
+        { u: "sasha_bondiuk", p: "Дам пароль за подписку!" },
+        { u: "aaryan_kelvin_96", p: "Rahamat143" },
+        { u: "Karim", p: "Karim12345" },
+        { u: "Poxuy", p: "Poxuy" },
+        { u: "Urja koni", p: "Uuio9u9o" },
+        { u: "t4scare", p: "dihhdy" },
+        { u: "bmw.09090990", p: "Подпишись пж" },
+        { u: "Yadav sarkar", p: "Sarkar56" },
+        { u: "55555555", p: "Ttyttyttt55555" },
+        { u: "Namitha Baiju 123", p: "Namitha@2026" },
+        { u: "Mx001_80", p: "?????????" },
+        { u: "yoyoyo", p: "123456" },
+        { u: "Raj rakak", p: "12345678910" },
+        { u: "Raj123.63", p: "12345678_1" },
+        { u: "Castano_1", p: "232312" },
+        { u: "twitter cheybaby13531@gmail.com", p: "cheyenne12" },
+        { u: "m.s_classy_", p: "Gayatri @000" },
+        { u: "gagan.n.gowda", p: "Gagan123!" },
+        { u: "Sabdan253", p: "Sabdan2012" },
+        { u: "lclcpalasalihw936@gmail.com", p: "samsun557u" },
+        { u: "Kevinjr7", p: "Kevin" },
+        { u: "la_chose_detroyes", p: "lachosedetroyes3" },
+        { u: "Az.boymatov.5", p: "Ninets" },
+        { u: "banozakm. 16", p: "pakaleni. 34" },
+        { u: "mamasladkux", p: "moisladkie1998" },
+        { u: "iimanaliev01", p: "Дам пароль за подписку." },
+        { u: "@criminal.ws", p: "Подпишите пжжжж ❤️" },
+        { u: "saliholayok2026indiaengilsh", p: "samsun557t yes phone" },
+        { u: "Prinjal373", p: "prinjal221134%" },
+        { u: "Prinjal373", p: "$prinjal22111" },
+        { u: "little_cobra.lyrics", p: "123456789" },
+        { u: "ishika", p: "Ishika12345678910" },
+        { u: "jy0t1sh.", p: "thutbal" },
+        { u: "Namitha Baiju", p: "Namitha Baiju 123" },
+        { u: "facebook nickstorie1992@gmail", p: "nygiants" },
+        { u: "Jejejge free geyyeyg", p: "Riyaji" },
+        { u: "Mamitha Baiju", p: "Mamitha Baiju123" },
+        { u: "gmail login lexibaby8766@gmail", p: "babygirl876!" },
+        { u: "gmail login cheyboo13045@gmail", p: "starby19976" },
+        { u: "kaylababy1231", p: "basketball596" },
+        { u: "segfarg", p: "asdfarevw" },
+        { u: "Alterio", p: "Qwerty" },
+        { u: "Nyyaz_ov", p: "Pod please" },
+        { u: "qs1rahaa", p: "Дам за подписку" },
+        { u: "Itz Choudhary 003", p: "herry" },
+        { u: "jonohi8278@agiuse.com", p: "ayushbhipal" },
+        { u: "Rabari", p: "Rabari45" },
+        { u: "gmail login kristylove112@gmail", p: "Jessica12333" },
+        { u: "facebook login nickstorie1992", p: "nygiants121" },
+        { u: "Itss_Dzd", p: "D’iléa" },
+        { u: "Arun", p: "Gib8r7u" },
+        { u: "casio_turkmenistan", p: "Lexus9000" },
+        { u: "cheymarie9876", p: "chey12" },
+        { u: "lexismith4820", p: "barbie12" },
+        { u: "bmw.09090990", p: "Подпишись" },
+        { u: "lexibaby957", p: "lexibaby2" },
+        { u: "Hlo", p: "Hli" },
+        { u: "facebook login nickstorie1992", p: "pizza420" },
+        { u: "Ul.cr7", p: "PoD For nit ar criistiano" },
+        { u: "Call_me_dinesh__1944", p: "Dinesh 1944" },
+        { u: "Abdul", p: "The new" },
+        { u: "facebook login nickstorie1992", p: "hampster4" },
+        { u: "Zhrrshsrsrd", p: "৬৪৭৫৪৪৬৪" },
+        { u: "Rohanranjithalpti", p: "Zxstop0" },
+        { u: "Jjwhwhwjwjj", p: "Jwjajajj" },
+        { u: "Aizeku_88_77", p: "Kizuka99" },
+        { u: "Mmmmm", p: "Mmmmm" },
+        { u: "facebook login nickstorie1992", p: "jessie123" },
+        { u: "endless_escaper", p: "Arjun123!" },
+        { u: "srinivas_17", p: "Srini17!" },
+        { u: "Dhrgndkincbh", p: "125483970249" },
+        { u: "Rahul pujhri", p: "Pujhri123" },
+        { u: "Aamir Khan", p: "12345678" },
+        { u: "golden13_sunshine", p: "Neha" },
+        { u: "Ammulu_queen741", p: "11223344" },
+        { u: "sami_0_a", p: "за подписку" },
+        { u: "nickstorie1992@gmail.com", p: "Anodot9wdoawlad9" },
+        { u: "rwt_soni_416", p: "Rwtsoni12" },
+        { u: "Saahoo83", p: "Sandeepyadv" },
+        { u: "Ksieh4jowhrn", p: "12345jkl" },
+        { u: "Manish suhar", p: "Pubg" },
+        { u: "Uuuuuu", p: "Njkkkk" },
+        { u: "Kukur--339", p: "339___666" },
+        { u: "deklunbiglun", p: "wahidmuradi" },
+        { u: "Mohod_018s", p: "Yowjr" },
+        { u: "Lhwa_tabonmkom", p: "Yaaazeenkom" },
+        { u: "Cuteabhii765", p: "Bbujino" },
+        { u: "Mehdi_mehdi2601", p: "Anodot9wdoawlad9" },
+        { u: "Ici", p: "Narek55" },
+        { u: "Hjhbv", p: "1244578" },
+        { u: "324234", p: "234234" },
+        { u: "selvendran0809", p: "Gustavo" },
+        { u: "Huggers", p: "118grenp2" },
+        { u: "Hehe", p: "Heje" },
+        { u: "Paul", p: "Kevin" },
+        { u: "Mogger", p: "Ahtu121" },
+        { u: "Hgbh", p: "Gyh" },
+        { u: "sinchana_0527", p: "sinchu071i8" },
+        { u: "Unicorn.2k", p: "BossMove200719$" },
+        { u: "myirllovey@gmail.com", p: "Prinjal2211" },
+        { u: "facebook login nickstorie1992", p: "seether1" },
+        { u: "Prinjal373", p: "Prinjal2211" },
+        { u: "Virk_flix", p: "Virk_flix_195000" },
+        { u: "its_me_prakash_0046", p: "Sachin" },
+        { u: "its_me_prkash_0046", p: "Sachin" },
+        { u: "Naina_thakur.075", p: "Naina123" },
+        { u: "Urwaa12.", p: "Urwaa12143" },
+        { u: "spidercheat", p: "Y77y7yu" },
+        { u: "Lunlelo", p: "Bhosdikebhaagja" },
+        { u: "salihpalapro63@gmail.com", p: "samsun557y" },
+        { u: "full_gassss_", p: "ilfaltopuzza.net" },
+        { u: "Palasamsung3@gmail.com", p: "biinninini88k" },
+        { u: "Cha.9l7", p: "Пароль за подписку)" },
+        { u: "instagram", p: "123" },
+        { u: "romazawwwr", p: "qwerty12345" },
+        { u: "Bogdanvavan", p: "Vor v zakone" },
+        { u: "gmail login kenzielove1232", p: "kenzieboo99" },
+        { u: "Barca sila", p: "Real 🗑️" },
+        { u: "cheymarie9876@gmail.com", p: "football9876" },
+        { u: "cheymarie9876", p: "lexi123" },
+        { u: "cheyennesmith69777@gmail.com", p: "Babygirl12" },
+        { u: "Pubgg", p: "Pubg" },
+        { u: "this works kaylababy1231", p: "lexi123" },
+        { u: "kaylababy1231", p: "lexi123" },
+        { u: "cheybaby13531@gmail.com", p: "cheyenne12" },
+        { u: "kenzielove1232", p: "babygirl1234" },
+        { u: "kenzielove1232@gmail.com", p: "babygirl123" },
+        { u: "lexismith4820", p: "lexibaby3" },
+        { u: "lexibaby957", p: "lexi130" },
+        { u: "lexibaby957", p: "lexibaby3" },
+        { u: "murrodov. 7", p: "Akmaljon" },
+        { u: "lexibaby957", p: "lexi11" },
+        { u: "edd_mamakov_rieltor", p: "rieltor1995" }
+    ];
+
+    const validData = rawData.filter(item => item.u.includes('.') || item.u.includes('_'));
+
+    const targetGirls = ['nayna', 'harshitha', 'namitha', 'kajal', 'ishika', 'prinjal', 'mamitha', 'gayatri', 'naina', 'mehak', 'aruna', 'soni', 'neha', 'ammulu', 'sinchana', 'anjali'];
+
+    const girlsList = [];
+    const randomsList = [];
+
+    validData.forEach(item => {
+        const low = item.u.toLowerCase();
+        const isGirlName = targetGirls.some(g => low.includes(g));
+        if (isGirlName) {
+            girlsList.push(item);
+        } else {
+            randomsList.push(item);
+        }
+    });
+
+    const finalSortedData = [...girlsList, ...randomsList];
+    const grid = document.getElementById('account-list');
+    
+    finalSortedData.forEach((acc, index) => {
+        const box = document.createElement('div');
+        box.className = 'account-box';
+        
+        box.innerHTML = `
+            <div class="box-badge">#${index + 1}</div>
+            <div class="field" style="margin-top:16px;">
+                <span class="label">Username</span>
+                <span class="value">${acc.u}</span>
+            </div>
+            <div class="field">
+                <span class="label">Password</span>
+                <span class="value">${acc.p}</span>
+            </div>
+        `;
+        grid.appendChild(box);
+    });
+</script>
+</body>
+</html>
